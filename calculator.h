@@ -1,25 +1,46 @@
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 #include <QWidget>
-#include <QStack>
-#include <QLabel>
-#include <QPushButton>
-#include <QGridLayout>
-#include <QRegularExpression>
-#include <QFont>
 
-class Calculator
+QT_BEGIN_NAMESPACE
+class QLineEdit;
+QT_END_NAMESPACE
+class Button;
+
+class Calculator : public QWidget
 {
     Q_OBJECT
-private:
-    QLabel* displaystring;
-    QStack<QString> stack;
 public:
-    Calculator(QWidget *pwgt = 0);
-    QPushButton* createButton(const QString& str);
-    void calculate();
-public slots:
-    void slotButtonClicked();
+    Calculator(QWidget *parent = nullptr);
+private slots:
+    void digitClicked();
+    void unaryOperatorClicked();
+    void additiveOperatorClicked();
+    void multiplicativeOperatorClicked();
+    void equalClicked();
+    void pointClicked();
+    void changeSignClicked();
+    void backspaceClicked();
+    void clear();
+    void clearAll();
+    void clearMemory();
+    void readMemory();
+    void setMemory();
+    void addToMemory();
+private:
+    template<typename PointerToMemberFunction>
+    Button *createButton(const QString &text, const PointerToMemberFunction &member);
+    void abortOperation();
+    bool calculate(double rightOperand, const QString &pendingOpeator);
+    double sumInMemory;
+    double sumSoFar;
+    double factorSoFar;
+    QString pendingAdditiveOperator;
+    QString pendingMultiplicativeOperator;
+    bool waitingForOperand;
+    QLineEdit *display;
+    enum {NumDigitButtons = 10};
+    Button *digitButtons[NumDigitButtons];
 };
 
 #endif // CALCULATOR_H
