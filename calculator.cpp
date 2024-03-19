@@ -3,9 +3,11 @@
 
 #include <QGridLayout>
 #include <QLineEdit>
+#include <QtMath>
 
 Calculator::Calculator(QWidget* parent) : QWidget(parent), sumInMemory(0.0), sumSoFar(0.0), factorSoFar(0.0), waitingForOperand(true) {
     display = new QLineEdit("0");
+    display->setReadOnly(true);
     display->setAlignment(Qt::AlignRight);
     display->setMaxLength(15);
     QFont font = display->font();
@@ -14,7 +16,7 @@ Calculator::Calculator(QWidget* parent) : QWidget(parent), sumInMemory(0.0), sum
     for(int i = 0; i < NumDigitButtons; ++i) {
         digitButtons[i] = createButton(QString::number(i), &Calculator::digitClicked);
     }
-    Button *pointButton = createButton(tr("."), &Calculator::digitClicked);
+    Button *pointButton = createButton(tr("."), &Calculator::pointClicked);
     Button *changeSignButton = createButton(tr("\302\261"), &Calculator::changeSignClicked);
 
     Button *backspaceButton = createButton(tr("Backspace"), &Calculator::backspaceClicked);
@@ -60,6 +62,7 @@ Calculator::Calculator(QWidget* parent) : QWidget(parent), sumInMemory(0.0), sum
     mainLayout->addWidget(powerButton, 3, 5);
     mainLayout->addWidget(reciprocalButton, 3, 5);
     mainLayout->addWidget(equalButton, 5, 5);
+    setLayout(mainLayout);
     setWindowTitle(tr("Calcultor"));
 }
 
