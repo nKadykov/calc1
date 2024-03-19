@@ -1,14 +1,14 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include <QToolButton>
+#include <QToolButton> // кнопка инструмента обеспечивает быстрый доступ к определённым командам или параметрам, не имеет текстовой метки, вместо неё показывает значок
 
-class Button : public QToolButton
+class Button : public QToolButton // класс Button объявляем наследником класса QToolButton
 {
-    Q_OBJECT
+    Q_OBJECT // компилятор мета-объектов (moc), который считывает файл заголовка C++, если он находит одно или несколько объявлений класса, содеращих макрос Q_OBJECT, он создаёт исходный файл С++, содержащий метаобъектный код для этих классов
 public:
-    explicit Button(const QString &text, QWidget *parent = nullptr);
-    QSize sizeHint() const override;
+    explicit Button(const QString &text, QWidget *parent = nullptr); // конструктор создания кнопки инструмента с текстом text и родителем parent
+    QSize sizeHint() const override; // устанавливает рекомендуемый размер виджета, по умолчанию возвращает недопустимый размер, если для этого виджета нет макета
 };
 
 #endif // BUTTON_H

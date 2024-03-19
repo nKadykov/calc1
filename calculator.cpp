@@ -60,7 +60,7 @@ Calculator::Calculator(QWidget* parent) : QWidget(parent), sumInMemory(0.0), sum
     mainLayout->addWidget(plusButton, 5, 4);
     mainLayout->addWidget(squareRootButton, 2, 5);
     mainLayout->addWidget(powerButton, 3, 5);
-    mainLayout->addWidget(reciprocalButton, 3, 5);
+    mainLayout->addWidget(reciprocalButton, 4, 5);
     mainLayout->addWidget(equalButton, 5, 5);
     setLayout(mainLayout);
     setWindowTitle(tr("Calcultor"));
@@ -160,7 +160,7 @@ void Calculator::multiplicativeOperatorClicked() {
 void Calculator::equalClicked() {
     double operand = display->text().toDouble();
     if(!pendingMultiplicativeOperator.isEmpty()) {
-        if(calculate(operand, pendingMultiplicativeOperator)) {
+        if(!calculate(operand, pendingMultiplicativeOperator)) {
             abortOperation();
             return;
         }

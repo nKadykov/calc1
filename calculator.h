@@ -1,19 +1,19 @@
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
-#include <QWidget>
+#include <QWidget> // виджет - атом пользовательского интерфейса, он получает события мыши, клавиатуры и другие события оконной системы и рисует своё представление на экране, каждый виджет отсортирован в Z-порядке
 
-QT_BEGIN_NAMESPACE
-class QLineEdit;
+QT_BEGIN_NAMESPACE // макросы, которые можно переопределить при сборке Qt в определённом пространстве имён
+class QLineEdit; // позволяет пользователям вводить и редактировать одну строку обычного текст с помощью функций редактирования
 QT_END_NAMESPACE
 class Button;
 
-class Calculator : public QWidget
+class Calculator : public QWidget // класс Calculator объявляем наследником класса QWidget
 {
     Q_OBJECT
 public:
     Calculator(QWidget *parent = nullptr);
-private slots:
-    void digitClicked();
+private slots: // слот вызывается, когда излучается сигнал, подключённый к нему, слоты являются обычными функциями и могут быть вызваны обычным образом
+    void digitClicked(); //
     void unaryOperatorClicked();
     void additiveOperatorClicked();
     void multiplicativeOperatorClicked();
