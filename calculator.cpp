@@ -1,19 +1,20 @@
 #include "calculator.h"
 #include "button.h"
 
-#include <QGridLayout>
-#include <QLineEdit>
-#include <QtMath>
+#include <QGridLayout> // берёт пространство, предоставленное ему родительским макетом или родительским виджетом, делит его на строки и столбцы и помещает каждый виджет, которым он управляет, в правильную ячейку
+#include <QLineEdit> // позволяет пользователям вводить и редактировать одну строку обычного текста с помощью функций редактирования
+#include <QtMath> // библиотека для работы с математическими функциями
 
 Calculator::Calculator(QWidget* parent) : QWidget(parent), sumInMemory(0.0), sumSoFar(0.0), factorSoFar(0.0), waitingForOperand(true) {
-    display = new QLineEdit("0");
-    display->setReadOnly(true);
-    display->setAlignment(Qt::AlignRight);
-    display->setMaxLength(15);
-    QFont font = display->font();
-    font.setPointSize(font.pointSize() + 8);
-    display->setFont(font);
-    for(int i = 0; i < NumDigitButtons; ++i) {
+    display = new QLineEdit("0"); // выделение памяти под однострочный тектовый редактор, установка начального значения "0"
+    display->setReadOnly(true); // дисплей только для чтения
+    display->setAlignment(Qt::AlignRight); // выравнивание дисплея по левому краю
+    display->setMaxLength(15); // установка максимальной длины дисплея
+    QFont font = display->font(); // создание объекта для шрифта дисплея
+    font.setPointSize(40); // установка размера
+    font.setStyle(QFont::StyleNormal); // установка стиля
+    display->setFont(font); // установка шрифта
+    for(int i = 0; i < NumDigitButtons; ++i) { // массив создания кнопок для цифр
         digitButtons[i] = createButton(QString::number(i), &Calculator::digitClicked);
     }
     Button *pointButton = createButton(tr("."), &Calculator::pointClicked);
@@ -35,38 +36,38 @@ Calculator::Calculator(QWidget* parent) : QWidget(parent), sumInMemory(0.0), sum
     Button *reciprocalButton = createButton(tr("1/x"), &Calculator::unaryOperatorClicked);
     Button *equalButton = createButton(tr("="), &Calculator::equalClicked);
 
-    QGridLayout *mainLayout = new QGridLayout;
+    QGridLayout *mainLayout = new QGridLayout; // определение макета
 
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    mainLayout->addWidget(display, 0, 0, 1, 6);
-    mainLayout->addWidget(backspaceButton, 1, 0, 1, 2);
-    mainLayout->addWidget(clearButton, 1, 2, 1, 2);
-    mainLayout->addWidget(clearAllButton, 1, 4, 1, 2);
-    mainLayout->addWidget(clearMemoryButton, 2, 0);
-    mainLayout->addWidget(readMemoryButton, 3, 0);
-    mainLayout->addWidget(setMemoryButton, 4, 0);
-    mainLayout->addWidget(addToMemoryButton, 5, 0);
-    for(int i = 1; i < NumDigitButtons; ++i) {
+    mainLayout->setSizeConstraint(QLayout::SetMaximumSize); // установка геометрии приложения
+    mainLayout->addWidget(display, 0, 0, 1, 6); // добавление дисплея
+    mainLayout->addWidget(backspaceButton, 1, 0, 1, 2); // добавление кнопки Backspace
+    mainLayout->addWidget(clearButton, 1, 2, 1, 2); // добавление кнопки Clear
+    mainLayout->addWidget(clearAllButton, 1, 4, 1, 2); // добавление кнопки Clear All
+    mainLayout->addWidget(clearMemoryButton, 2, 0); // добавление кнопки MC
+    mainLayout->addWidget(readMemoryButton, 3, 0); // добавление кнопки MR
+    mainLayout->addWidget(setMemoryButton, 4, 0); // добавление кнопки MS
+    mainLayout->addWidget(addToMemoryButton, 5, 0); // добавление кнопки M+
+    for(int i = 1; i < NumDigitButtons; ++i) { // цикл добавления кнопок цифр
         int row = ((9 - i) / 3) + 2;
         int column = ((i - 1) % 3) + 1;
         mainLayout->addWidget(digitButtons[i], row, column);
     }
-    mainLayout->addWidget(digitButtons[0], 5, 1);
-    mainLayout->addWidget(pointButton, 5, 2);
-    mainLayout->addWidget(changeSignButton, 5, 3);
-    mainLayout->addWidget(divisionButton, 2, 4);
-    mainLayout->addWidget(timesButton, 3, 4);
-    mainLayout->addWidget(minusButton, 4, 4);
-    mainLayout->addWidget(plusButton, 5, 4);
-    mainLayout->addWidget(squareRootButton, 2, 5);
-    mainLayout->addWidget(powerButton, 3, 5);
-    mainLayout->addWidget(reciprocalButton, 4, 5);
-    mainLayout->addWidget(equalButton, 5, 5);
-    setLayout(mainLayout);
-    setWindowTitle(tr("Calcultor"));
+    mainLayout->addWidget(digitButtons[0], 5, 1); // установка кнопки 0
+    mainLayout->addWidget(pointButton, 5, 2); // установка кнопки +
+    mainLayout->addWidget(changeSignButton, 5, 3); // установка кнопки изменения знака
+    mainLayout->addWidget(divisionButton, 2, 4); // добавление кнопки деления
+    mainLayout->addWidget(timesButton, 3, 4); // добавление кнопки умножения
+    mainLayout->addWidget(minusButton, 4, 4); // добавление кнопки вычитания
+    mainLayout->addWidget(plusButton, 5, 4); // добавление кнопки сложения
+    mainLayout->addWidget(squareRootButton, 2, 5); // добавление кнопки sqrt
+    mainLayout->addWidget(powerButton, 3, 5); // добавление кнопки возведения в степень
+    mainLayout->addWidget(reciprocalButton, 4, 5); // добавление кнопки деления 1 на число
+    mainLayout->addWidget(equalButton, 5, 5); // добавление кнопки =
+    setLayout(mainLayout); // установка макета
+    setWindowTitle(tr("Engineering Calculator")); // установка названия окна
 }
 
-void Calculator::digitClicked() {
+void Calculator::digitClicked() { // нажатие кнопки цифры
     Button *clickedButton = qobject_cast<Button*>(sender());
     int digitValue = clickedButton->text().toInt();
     if(display->text() == "0" && digitValue == 0.0) {
@@ -79,7 +80,7 @@ void Calculator::digitClicked() {
     display->setText(display->text() + QString::number(digitValue));
 }
 
-void Calculator::unaryOperatorClicked() {
+void Calculator::unaryOperatorClicked() { // нажатие клавишы унарного оператора
     Button* clickedButton = qobject_cast<Button*>(sender());
     QString clickedOperator = clickedButton->text();
     double operand = display->text().toDouble();
@@ -105,7 +106,7 @@ void Calculator::unaryOperatorClicked() {
     waitingForOperand = true;
 }
 
-void Calculator::additiveOperatorClicked() {
+void Calculator::additiveOperatorClicked() { // если нажата клавиша аддитивного оператора
     Button *clickedButton = qobject_cast<Button*>(sender());
     if(!clickedButton) {
         return;
@@ -136,7 +137,7 @@ void Calculator::additiveOperatorClicked() {
     waitingForOperand = true;
 }
 
-void Calculator::multiplicativeOperatorClicked() {
+void Calculator::multiplicativeOperatorClicked() { // если нажата клавиша мультипликативного оператора
     Button *clickedButton = qobject_cast<Button*>(sender());
     if(!clickedButton) {
         return;
@@ -157,7 +158,7 @@ void Calculator::multiplicativeOperatorClicked() {
     waitingForOperand = true;
 }
 
-void Calculator::equalClicked() {
+void Calculator::equalClicked() { // если нажата клавиша =
     double operand = display->text().toDouble();
     if(!pendingMultiplicativeOperator.isEmpty()) {
         if(!calculate(operand, pendingMultiplicativeOperator)) {
@@ -183,7 +184,7 @@ void Calculator::equalClicked() {
     waitingForOperand = true;
 }
 
-void Calculator::pointClicked() {
+void Calculator::pointClicked() { // если нажата клавиша .
     if(waitingForOperand) {
         display->setText("0");
     }
@@ -193,7 +194,7 @@ void Calculator::pointClicked() {
     waitingForOperand = false;
 }
 
-void Calculator::changeSignClicked() {
+void Calculator::changeSignClicked() { // если нажата клавиша изменения знака
     QString text = display->text();
     double value = text.toDouble();
     if(value > 0.0) {
@@ -205,7 +206,7 @@ void Calculator::changeSignClicked() {
     display->setText(text);
 }
 
-void Calculator::backspaceClicked() {
+void Calculator::backspaceClicked() { // если нажата клавиша Backspace
     if(waitingForOperand) {
         return;
     }
@@ -218,7 +219,7 @@ void Calculator::backspaceClicked() {
     display->setText(text);
 }
 
-void Calculator::clear() {
+void Calculator::clear() { // если нажата клавиша Clear
     if(waitingForOperand) {
         return;
     }
@@ -226,7 +227,7 @@ void Calculator::clear() {
     waitingForOperand = true;
 }
 
-void Calculator::clearAll() {
+void Calculator::clearAll() { // если нажата клавиша Clear All
     sumSoFar = 0.0;
     factorSoFar = 0.0;
     pendingAdditiveOperator.clear();
@@ -235,38 +236,38 @@ void Calculator::clearAll() {
     waitingForOperand = true;
 }
 
-void Calculator::clearMemory() {
+void Calculator::clearMemory() { // если нажата клавиша MC
     sumInMemory = 0.0;
 }
 
-void Calculator::readMemory() {
+void Calculator::readMemory() { // если нажата клавиша MR
     display->setText(QString::number(sumInMemory));
     waitingForOperand = true;
 }
 
-void Calculator::setMemory() {
+void Calculator::setMemory() { // если нажата клавиша MS
     equalClicked();
     sumInMemory = display->text().toDouble();
 }
 
-void Calculator::addToMemory() {
+void Calculator::addToMemory() { // если нажата клавиша M+
     equalClicked();
     sumInMemory += display->text().toDouble();
 }
 
-template<typename PointerToMemberFunction>
+template<typename PointerToMemberFunction> // описание шаблонной функции создания клавиша
 Button *Calculator::createButton(const QString &text, const PointerToMemberFunction &member) {
     Button *button = new Button(text);
     connect(button, &Button::clicked, this, member);
     return button;
 }
 
-void Calculator::abortOperation() {
+void Calculator::abortOperation() { // если ошибка
     clearAll();
     display->setText(tr("####"));
 }
 
-bool Calculator::calculate(double rightOperand, const QString &pendingOperator) {
+bool Calculator::calculate(double rightOperand, const QString &pendingOperator) { // метод для вычисления результата
     if(pendingOperator == tr("+")) {
         sumSoFar += rightOperand;
     }
